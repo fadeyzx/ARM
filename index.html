@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Тест — АРМ врача · 24 СД</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1020;--panel:#141d31;--panel2:#1b2942;--line:#2a3a56;--muted:#9aabc5;--accent:#62d6b2;--text:#edf3ff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#172747 0,#0b1020 55%);color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,Arial,sans-serif}
+.wrap{max-width:900px;margin:auto;padding:28px 18px 70px}.top{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:22px}
+.kicker{color:var(--accent);font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}
+h1{font-size:clamp(27px,5vw,42px);line-height:1.08;margin:8px 0}.sub{color:var(--muted);margin:8px 0 0}
+.pill{border:1px solid var(--line);border-radius:999px;padding:8px 13px;color:var(--muted);white-space:nowrap;font-size:13px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:24px 0}
+.stat,.question,.result{background:linear-gradient(145deg,var(--panel),#111a2c);border:1px solid var(--line);border-radius:18px}
+.stat{padding:14px 16px}.stat strong{display:block;font-size:22px}.stat span{font-size:12px;color:var(--muted)}
+.track{height:7px;background:#25334b;border-radius:20px;overflow:hidden;margin-top:12px}.fill{height:100%;width:0;background:var(--accent);transition:width .2s}
+.question{padding:20px;margin:14px 0}.qhead{display:flex;gap:12px;align-items:flex-start}.num{flex:0 0 30px;height:30px;border-radius:9px;background:#20344b;color:var(--accent);display:grid;place-items:center;font-weight:800;font-size:13px}
+.qtitle{font-weight:650;font-size:17px;margin:2px 0 14px}
+.options{display:grid;gap:8px}.option{display:flex;gap:11px;align-items:flex-start;padding:12px 13px;border:1px solid #2b3a55;border-radius:12px;background:#111a2a;cursor:pointer;transition:.15s}
+.option:hover{border-color:#6889ad;background:#18263c}.option:has(input:checked){border-color:var(--accent);background:#15312f}
+.option input{accent-color:var(--accent);margin-top:4px;flex:0 0 auto}.option span{font-size:15px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin:24px 0}.btn{border:0;border-radius:12px;padding:13px 19px;font-weight:750;font-size:15px;cursor:pointer}
+.primary{background:var(--accent);color:#08221d}.secondary{background:#202d43;color:var(--text);border:1px solid var(--line)}
+.note{color:var(--muted);font-size:13px}.result{padding:24px;margin-top:22px;display:none}.result h2{margin:0 0 5px}.score{font-size:46px;font-weight:850;color:var(--accent);line-height:1.2;margin:15px 0}
+.resultgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.resultgrid div{background:#0f1929;border:1px solid var(--line);border-radius:12px;padding:13px}.resultgrid b{display:block;font-size:24px}.resultgrid small{color:var(--muted)}
+footer{margin-top:34px;color:#71839e;font-size:12px;text-align:center}
+@media(max-width:560px){.wrap{padding:20px 12px 50px}.question{padding:15px}.top{align-items:flex-start}.pill{font-size:11px}.resultgrid{grid-template-columns:1fr}.stats{gap:8px}}
+</style></head><body><main class="wrap">
+<header class="top"><div><div class="kicker">Проверка знаний · 24 СД</div><h1>АРМ врача</h1><p class="sub">Тест по материалам скриншотов</p></div><div class="pill">39 вопросов</div></header>
+<section class="stats"><div class="stat"><strong id="answered">0 / 39</strong><span>Отвечено</span><div class="track"><div class="fill" id="progress"></div></div></div><div class="stat"><strong id="remaining">39</strong><span>Осталось ответить</span></div></section>
+<div id="quiz"></div>
+<div class="actions"><button class="btn primary" id="finish">Завершить тест</button><button class="btn secondary" id="reset">Начать заново</button></div>
+<p class="note">Ответы и правильность не показываются во время прохождения. Итог появится только после завершения теста.</p>
+<section class="result" id="result" aria-live="polite"><h2>Результат теста</h2><p class="sub">Проверка завершена. Подробности отдельных ответов не раскрываются.</p><div class="score" id="percent">—</div><div class="resultgrid"><div><b id="right">0</b><small>Правильных ответов</small></div><div><b id="wrong">0</b><small>Ошибок</small></div><div><b id="total">39</b><small>Всего вопросов</small></div></div><div class="actions"><button class="btn secondary" id="again">Пройти ещё раз</button></div></section>
+<footer>Учебный тест по предоставленным материалам. Выбранные на скриншотах варианты использованы как ключ ответов.</footer>
+</main>
+<script>
+const questions = [{"q": "Внешний файл можно прикрепить …", "a": ["К документу посещения и данным пациента", "Только к документу посещению", "Только к данным пациента"], "correct": 0}, {"q": "Чтобы найти все внешние файлы пациента …", "a": ["Нажать «Список МД» на вкладке «Список пациентов»", "Нажать «Просмотр всех документов» на вкладке «Медицинская карта»", "Нажать «Список МД» на вкладке «Приемы»"], "correct": 1}, {"q": "Какой значок появляется рядом с медицинским документом, к которому был прикреплен внешний файл?", "a": ["Скрепка", "Нет значка", "Значок файла"], "correct": 0}, {"q": "Выписанный рецепт …", "a": ["Можно изменить", "Можно выписать снова", "Можно испортить"], "correct": 2}, {"q": "В какой вкладке рабочего стола по прикреплению находятся заявки, которые создаются в текущей МО и поступают в МО, от которой необходимо открепить пациента?", "a": ["Заявки на подтверждение", "Заявки на разрешение открепления", "Прикрепления к МО"], "correct": 1}, {"q": "В каком разделе находятся отчеты по прикреплению пациентов?", "a": ["«Регистратура»", "«Статистика»", "«Медицинская организация»"], "correct": 1}, {"q": "В каком случае можно автоматически определить участок по адресу пациента?", "a": ["Если у пациента есть адрес в системе", "Если фактический адрес совпадает с адресом регистрации", "Если адрес участка прикрепления совпадает с адресом регистрации"], "correct": 2}, {"q": "Какие вкладки отображаются в АРМ врача, если выбран пациент?", "a": ["«Приемы», «Общие документы», «Медицинская карта»", "«Список пациентов», «Приемы», «Общие документы», «Медицинская карта»", "«Список пациентов»"], "correct": 1}, {"q": "На форме «Информация по открытому случаю» …", "a": ["Заполнить только поля «Вид медпомощи» и «Причина посещения»", "Пустые поля не обязательны для заполнения", "Все поля обязательны для заполнения"], "correct": 2}, {"q": "Для подписания медицинского документа …", "a": ["Такая возможность не предусмотрена", "Необходимо нажать кнопку «Документ готов»", "Необходимо нажать кнопку «Записать и закрыть»"], "correct": 1}, {"q": "В результате открытия амбулаторного случая …", "a": ["Открыт только случай", "Создано только посещение", "Открыт амбулаторный случай и создано новое посещение"], "correct": 2}, {"q": "При добавлении посещения, если нет открытых случаев …", "a": ["Выведется сообщение «Нет открытых случаев. Откройте новый случай»", "Будет создано новое посещение", "Возникнет ошибка"], "correct": 0}, {"q": "Статус «Закрыт» для листка нетрудоспособности означает …", "a": ["Случай нетрудоспособности закрыт, документ выдан нетрудоспособному", "Документ не готов к выдаче, его можно редактировать", "Документ выдан на руки нетрудоспособному, его можно редактировать, так как случай еще не закрыт"], "correct": 0}, {"q": "Что необходимо указать в «Настройках контроля исполнения» для корректной работы в «АРМ врача»?", "a": ["Кабинет", "Врач и СМП", "Врач и кабинет"], "correct": 2}, {"q": "При заполнении медицинского документа на основании предыдущего документа …", "a": ["Предыдущий документ должен быть в статусе «Готов»", "Предыдущий документ должен быть в статусе «Готов» и иметь электронную подпись", "Предыдущий документ должен быть в статусе «Готов» и специальность в его заголовке должна совпадать со специальностью текущего документа"], "correct": 2}, {"q": "Для выписки рецепта по форме «107-1/у» необходимо воспользоваться кнопкой в «АРМ врача» …", "a": ["Лекарственные назначения", "Назначение услуг", "Открыть ЛЛО"], "correct": 0}, {"q": "По прививкам, по которым создан медотказ …", "a": ["Нельзя назначить кабинет, но можно планировать проверку реакции", "Нельзя назначить кабинет и планировать проверку реакции", "Можно планировать проверку реакции"], "correct": 1}, {"q": "Для продления или закрытия листка нетрудоспособности из другой ЛПУ …", "a": ["Необходимо создать обычный листок нетрудоспособности с типом «Выдан в другом ЛПУ»", "Необходимо создать обычный листок нетрудоспособности", "Необходимо нажать кнопку «ЛВН другого ЛПУ»"], "correct": 0}, {"q": "С помощью какой кнопки можно создать дубликат, продолжение и листок нетрудоспособности для места работы по совместительству?", "a": ["Создать", "Создать на основании", "Заполнить на основании"], "correct": 1}, {"q": "Для закрытия листка нетрудоспособности …", "a": ["Необходимо установить статус «Закрыт»", "Необходимо заполнить поля формы «Приступить к работе» или раздел «Статус нетрудоспособного» (значениями 32–34, 36) и установить статус «Закрыт»", "Необходимо заполнить поля формы «Приступить к работе» или раздел «Статус нетрудоспособного» (значениями 32–34, 36) и установить статус «Выдан»"], "correct": 1}, {"q": "Статус «Выдан» для листка нетрудоспособности означает …", "a": ["Документ выдан на руки нетрудоспособному, его можно редактировать, так как случай нетрудоспособности еще не закрыт", "Документ не готов к выдаче, его можно редактировать, этот статус ставится по умолчанию созданному документу", "Случай нетрудоспособности закрыт, документ выдан нетрудоспособному"], "correct": 0}, {"q": "Статус «Подготовка» для листка нетрудоспособности означает …", "a": ["Случай нетрудоспособности закрыт, документ выдан нетрудоспособному", "Документ не готов к выдаче, его можно редактировать, этот статус ставится по умолчанию созданному документу", "Документ выдан на руки нетрудоспособному, его можно редактировать"], "correct": 1}, {"q": "Какие варианты создания медицинского документа?", "a": ["При открытии случая и на вкладке «Общие документы»", "Только на вкладке «Общие документы»", "Только при открытии случая"], "correct": 0}, {"q": "Пациента можно поставить на диспансерный учет …", "a": ["Только через основные данные пациента", "Только из АРМ врача", "Через АРМ врача и основные данные пациента"], "correct": 2}, {"q": "Для снятия пациента с диспансерного учета …", "a": ["Ничего не надо делать", "Необходимо создать новый документ «Диспансерное наблюдение»", "Необходимо заполнить поля, связанные со снятием пациента с ДУ в существующем документе «Диспансерное наблюдение»"], "correct": 2}, {"q": "В каком отчете можно посмотреть информацию о хронических больных?", "a": ["Диспансерное наблюдение пациентов", "Список лиц, состоящих на диспансерном учете", "Контроль явок по диспансерному наблюдению"], "correct": 1}, {"q": "Поле «Первичный диагноз» в документе «Листок нетрудоспособности» …", "a": ["Необходимо заполнить руками", "Автоматически подтянется, если для пациента был заполнен диагноз в медицинском документе или через раздел «Диагнозы»", "Автоматически подтянется из предыдущего медицинского документа"], "correct": 1}, {"q": "Какие данные необходимо обязательно заполнить в листке нетрудоспособности?", "a": ["Дата начала и окончания нетрудоспособности, врач, председатель ВК при необходимости", "Даты начала и окончания нетрудоспособности, председатель ВК"], "correct": 0}, {"q": "Какой из перечисленных вариантов является вариантом быстрого поиска для пациента Рабынкова Анастасия Павловна 24.05.1997?", "a": ["РЯБАП97", "РЯБ 1997", "РЯБ А П 97"], "correct": 0}, {"q": "Если пациент создан в системе, как создать новую карту?", "a": ["«Выбрать пациента»", "«Завести карту»", "Нажать кнопку «Открыть карту»"], "correct": 1}, {"q": "Кнопка «Перезаписать данные полиса» позволяет …", "a": ["Сохранить все изменения", "Добавить новый полис", "Сбросить все данные по полису"], "correct": 2}, {"q": "Какие поля нужно заполнить, чтобы привязать врача к участку?", "a": ["Участок и врача", "Участок, тип участка и врача", "Организацию, участок и врача"], "correct": 0}, {"q": "Где можно сменить или добавить участок пациенту?", "a": ["«Медицинская организация»", "«Основные данные пациента»", "«Регистратура» → «Поиск медицинской карты»"], "correct": 1}, {"q": "Добавление или смена участка конкретного пациента осуществляется в разделе …", "a": ["«Основные данные пациента» → «Смена участка»", "«Регистратура» → «Поиск медицинской карты»", "«Медицинская организация» → «Смена участков пациентов»"], "correct": 0}, {"q": "Кнопка с изображением кнопки-булавки позволяет …", "a": ["Создать пациента", "Закрепить документы за пациентом", "Заполнить фактического адреса на основании регистрации"], "correct": 2}, {"q": "Какое поле нужно заполнить, чтобы выбрать соглашение (страховую компанию)?", "a": ["Номер", "Бизнес-регион", "Комментарий"], "correct": 1}, {"q": "Поле «Место работы» находится в пункте смены …", "a": ["«Социального статуса»", "«Контактов»", "«ДУЛ»"], "correct": 0}, {"q": "Какое из перечисленных полей является обязательным для заполнения при создании пациента-ребенка?", "a": ["Контакты", "Социальный статус", "Представитель"], "correct": 2}, {"q": "Какую кнопку необходимо нажать, чтобы исправить опечатку у пациента?", "a": ["Корректировка", "Обновить", "Смена"], "correct": 0}];
+const quiz=document.getElementById('quiz');
+function render(){
+ quiz.innerHTML='';
+ questions.forEach((item,i)=>{
+  const card=document.createElement('section');card.className='question';
+  const head=document.createElement('div');head.className='qhead';
+  const n=document.createElement('div');n.className='num';n.textContent=String(i+1).padStart(2,'0');
+  const body=document.createElement('div');body.style.flex='1';
+  const title=document.createElement('div');title.className='qtitle';title.textContent=item.q;
+  const opts=document.createElement('div');opts.className='options';
+  item.a.forEach((answer,j)=>{
+   const label=document.createElement('label');label.className='option';
+   const input=document.createElement('input');input.type='radio';input.name='q'+i;input.value=j;
+   input.addEventListener('change',update);
+   const span=document.createElement('span');span.textContent=answer;
+   label.append(input,span);opts.append(label);
+  });
+  body.append(title,opts);head.append(n,body);card.append(head);quiz.append(card);
+ });
+ update();
+}
+function update(){
+ const count=questions.filter((_,i)=>document.querySelector('input[name="q'+i+'"]:checked')).length;
+ document.getElementById('answered').textContent=count+' / '+questions.length;
+ document.getElementById('remaining').textContent=questions.length-count;
+ document.getElementById('progress').style.width=(count/questions.length*100)+'%';
+}
+function finish(){
+ const chosen=questions.map((_,i)=>document.querySelector('input[name="q'+i+'"]:checked'));
+ if(chosen.some(x=>!x)){const first=chosen.findIndex(x=>!x);document.querySelectorAll('.question')[first].scrollIntoView({behavior:'smooth',block:'center'});alert('Ответь на все вопросы перед завершением теста.');return;}
+ let right=0;chosen.forEach((x,i)=>{if(Number(x.value)===questions[i].correct)right++;});
+ const wrong=questions.length-right,percent=Math.round(right/questions.length*100);
+ document.getElementById('right').textContent=right;
+ document.getElementById('wrong').textContent=wrong;
+ document.getElementById('total').textContent=questions.length;
+ document.getElementById('percent').textContent=percent+'%';
+ document.getElementById('result').style.display='block';
+ document.getElementById('result').scrollIntoView({behavior:'smooth',block:'center'});
+ document.getElementById('finish').disabled=true;
+ document.getElementById('finish').textContent='Тест завершён';
+}
+function reset(){render();document.getElementById('result').style.display='none';document.getElementById('finish').disabled=false;document.getElementById('finish').textContent='Завершить тест';window.scrollTo({top:0,behavior:'smooth'});}
+document.getElementById('finish').addEventListener('click',finish);
+document.getElementById('reset').addEventListener('click',reset);
+document.getElementById('again').addEventListener('click',reset);
+render();
+</script></body></html>
